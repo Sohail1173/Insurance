@@ -4,6 +4,7 @@ from sklearn.model_selection import  train_test_split
 from InsurancePremium.constants.training_pipeline import *
 from InsurancePremium.exception import CustomException
 from InsurancePremium.logger.logging import logging
+from InsurancePremium.entity.artifact_entity import DataIngestionArtifact
 import gdown,zipfile
 import pandas as pd
 import sys
@@ -50,8 +51,14 @@ class DataIngestion:
 
             train_df.to_csv(self.data_ingestion_config.train_file_path,index=False,header=True)
             test_df.to_csv(self.data_ingestion_config.test_file_path,index=False,header=True)
-            logging.info("got the train.csv and test.csv file successfully")
-            
             os.remove(data_file)
+            logging.info("got the train.csv and test.csv file successfully")
+            data_ingestion_artifact=DataIngestionArtifact(
+                feature_store_file_path=self.data_ingestion_config.feature_store_file_path,
+                train_file_path=self.data_ingestion_config.train_file_path,
+                test_file_path=self.data_ingestion_config.test_file_path)
+            logging.info(f"Data Ingestion Artifact: {data_ingestion_artifact}")
+            return data_ingestion_artifact
+            
         except Exception as e:
             raise e
